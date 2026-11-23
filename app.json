@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "GreenFarmer",
+    "slug": "greenfarmer",
+    "scheme": "greenfarmer",
+    "version": "1.0.0",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "vn.greenfarmer.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "GreenFarmer cần dùng camera để quét mã QR truy xuất nguồn gốc.",
+        "NSPhotoLibraryUsageDescription": "GreenFarmer cần truy cập thư viện ảnh để tải ảnh nông trại, lô hàng và ảnh đại diện."
+      }
+    },
+    "android": {
+      "package": "vn.greenfarmer.app",
+      "permissions": ["CAMERA"],
+      "usesCleartextTraffic": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      ["expo-camera", { "cameraPermission": "GreenFarmer cần dùng camera để quét mã QR truy xuất nguồn gốc." }],
+      ["expo-image-picker", { "photosPermission": "GreenFarmer cần truy cập thư viện ảnh để tải ảnh nông trại, lô hàng và ảnh đại diện." }]
+    ]
+  }
+}
