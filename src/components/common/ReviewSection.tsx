@@ -1,12 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, View } from "react-native";
+import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
 import { Link } from "expo-router";
 import { colors, radius } from "@/theme";
 import { Txt } from "@/components/ui/Txt";
 import { Icon } from "@/components/ui/Icon";
-import { Button } from "@/components/ui/Button";
-import { Field } from "@/components/ui/Input";
-import { Notice } from "@/components/ui/States";
 import { useAuth } from "@/hooks/useAuth";
 import { reviewService } from "@/services/reviewService";
 import { productService } from "@/services/productService";
@@ -14,12 +11,26 @@ import { formatDate } from "@/lib/format";
 import { errMessage } from "@/lib/errors";
 import type { ReviewItem } from "@/types/product";
 
-function StarRating({ value, onChange, size = 22, readOnly }: { value: number; onChange?: (v: number) => void; size?: number; readOnly?: boolean }) {
+function StarRating({ value, onChange, size = 20, readOnly }: { value: number; onChange?: (v: number) => void; size?: number; readOnly?: boolean }) {
+  const [hover, setHover] = useState<number | null>(null);
+  const display = hover ?? value;
   return (
-    <View style={{ flexDirection: "row", gap: 2 }}>
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
       {[1, 2, 3, 4, 5].map((s) => (
-        <Pressable key={s} disabled={readOnly} onPress={() => onChange?.(s)} accessibilityLabel={`${s} sao`}>
-          <Icon name="star" size={size} color={s <= value ? colors.amber400 : colors.mutedFg + "66"} fill={s <= value ? colors.amber400 : "none"} />
+        <Pressable
+          key={s}
+          disabled={readOnly}
+          onPress={() => onChange?.(s)}
+          onHoverIn={() => !readOnly && setHover(s)}
+          onHoverOut={() => !readOnly && setHover(null)}
+          accessibilityLabel={`${s} sao`}
+        >
+          <Icon
+            name="star"
+            size={size}
+            color={s <= display ? colors.amber400 : "rgba(92,103,93,0.4)"}
+            fill={s <= display ? colors.amber400 : "none"}
+          />
         </Pressable>
       ))}
     </View>
@@ -58,10 +69,7 @@ export function ReviewSection({ productId }: { productId: number }) {
     () => [...reviews].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
     [reviews]
   );
-  const avg = useMemo(
-    () => (reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0),
-    [reviews]
-  );
+  const avg = useMemo(() => (reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0), [reviews]);
 
   const submit = async () => {
     setError(null);
@@ -85,55 +93,97 @@ export function ReviewSection({ productId }: { productId: number }) {
   };
 
   return (
-    <View style={{ marginTop: 8, borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 20, gap: 14 }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+    <View style={{ marginTop: 56, borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 40 }}>
+      {/* HEADER */}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 }}>
         <Icon name="message-square" size={20} color={colors.primary} />
-        <Txt variant="h2">Đánh giá sản phẩm</Txt>
+        <Txt size={20} lh={28} weight="700">Đánh giá sản phẩm</Txt>
       </View>
 
+      {/* TỔNG QUAN */}
       {!loading && reviews.length > 0 ? (
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 24 }}>
           <StarRating value={Math.round(avg)} readOnly size={16} />
-          <Txt bold>{avg.toFixed(1)}/5</Txt>
-          <Txt muted>· {reviews.length} đánh giá</Txt>
+          <Txt size={14} lh={20} weight="600">{avg.toFixed(1)}/5</Txt>
+          <Txt size={14} lh={20} muted>· {reviews.length} đánh giá</Txt>
         </View>
-      ) : null}
+      ) : (
+        <View style={{ height: 12 }} />
+      )}
 
-      <View style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.xl, padding: 16, gap: 12, backgroundColor: colors.muted + "66" }}>
+      {/* FORM: rounded-2xl border bg-muted/30 p-5 mb-8 */}
+      <View
+        style={{
+          borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.border,
+          backgroundColor: "rgba(242,243,232,0.3)", padding: 20, marginBottom: 32,
+        }}
+      >
         {user ? (
-          <>
-            <Txt variant="small" bold>Đánh giá của bạn</Txt>
-            <StarRating value={rating} onChange={setRating} />
-            <Field value={comment} onChangeText={setComment} placeholder="Chia sẻ cảm nhận của bạn về sản phẩm này..." multiline rows={3} />
-            {error ? <Notice text={error} /> : null}
-            {success ? <Notice text="Cảm ơn bạn đã đánh giá!" tone="success" /> : null}
-            <Button title="Gửi đánh giá" onPress={submit} loading={submitting} />
-          </>
+          <View style={{ gap: 12 }}>
+            <View>
+              <Txt size={14} lh={20} weight="500" style={{ marginBottom: 6 }}>Đánh giá của bạn</Txt>
+              <StarRating value={rating} onChange={setRating} />
+            </View>
+
+            <TextInput
+              value={comment}
+              onChangeText={setComment}
+              placeholder="Chia sẻ cảm nhận của bạn về sản phẩm này..."
+              placeholderTextColor={colors.mutedFg + "99"}
+              multiline
+              numberOfLines={3}
+              textAlignVertical="top"
+              style={{
+                minHeight: 78, borderWidth: 1, borderColor: colors.input, borderRadius: radius.md,
+                backgroundColor: colors.background, paddingHorizontal: 12, paddingVertical: 8,
+                fontSize: 14, lineHeight: 20, fontFamily: "BeVietnamPro_400Regular", color: colors.foreground,
+              }}
+            />
+
+            {error ? <Txt size={14} lh={20} color={colors.destructive}>{error}</Txt> : null}
+            {success ? <Txt size={14} lh={20} color={colors.primary}>Cảm ơn bạn đã đánh giá!</Txt> : null}
+
+            <Pressable
+              onPress={submitting ? undefined : submit}
+              style={{
+                alignSelf: "flex-start", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
+                height: 36, paddingHorizontal: 16, borderRadius: radius.md, backgroundColor: colors.primary,
+                opacity: submitting ? 0.5 : 1,
+              }}
+            >
+              {submitting ? <ActivityIndicator size="small" color={colors.primaryFg} /> : null}
+              <Txt size={14} lh={20} weight="500" color={colors.primaryFg}>Gửi đánh giá</Txt>
+            </Pressable>
+          </View>
         ) : (
-          <Txt muted>
-            <Link href="/auth/login" style={{ color: colors.primary, fontWeight: "700" }}>Đăng nhập</Link> để viết đánh giá cho sản phẩm này.
+          <Txt size={14} lh={20} muted>
+            <Link href="/auth/login" style={{ color: colors.primary, fontFamily: "BeVietnamPro_500Medium" }}>Đăng nhập</Link>{" "}
+            để viết đánh giá cho sản phẩm này.
           </Txt>
         )}
       </View>
 
+      {/* DANH SÁCH */}
       {loading ? (
-        <Txt muted>Đang tải đánh giá...</Txt>
+        <Txt size={14} lh={20} muted>Đang tải đánh giá...</Txt>
       ) : sorted.length === 0 ? (
-        <Txt muted>Chưa có đánh giá nào cho sản phẩm này.</Txt>
+        <Txt size={14} lh={20} muted>Chưa có đánh giá nào cho sản phẩm này.</Txt>
       ) : (
-        <View style={{ gap: 18 }}>
+        <View style={{ gap: 24 }}>
           {sorted.map((r) => (
             <View key={r.id} style={{ flexDirection: "row", gap: 12 }}>
-              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center" }}>
-                <Txt bold primary>{(r.buyerName ?? "U").charAt(0).toUpperCase()}</Txt>
+              <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: colors.muted, alignItems: "center", justifyContent: "center" }}>
+                <Txt size={14} lh={20}>{(r.buyerName ?? "U").charAt(0).toUpperCase()}</Txt>
               </View>
-              <View style={{ flex: 1, gap: 3 }}>
+              <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                  <Txt variant="title">{r.buyerName ?? "Người dùng"}</Txt>
-                  <Txt variant="small" muted>{formatDate(r.createdAt)}</Txt>
+                  <Txt size={14} lh={20} weight="500">{r.buyerName ?? "Người dùng"}</Txt>
+                  <Txt size={12} lh={16} muted>{formatDate(r.createdAt)}</Txt>
                 </View>
                 <StarRating value={r.rating} readOnly size={14} />
-                {r.comment ? <Txt style={{ marginTop: 2 }}>{r.comment}</Txt> : null}
+                {r.comment ? (
+                  <Txt size={14} lh={20} color="rgba(11,32,16,0.9)" style={{ marginTop: 6 }}>{r.comment}</Txt>
+                ) : null}
               </View>
             </View>
           ))}

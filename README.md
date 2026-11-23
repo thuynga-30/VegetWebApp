@@ -20,5 +20,7 @@ App gọi backend NestJS giống bản web cũ (không cần `/api`).
 - [x] Trang chủ `src/app/(shop)/index.tsx`
 - [x] Đăng nhập / Đăng ký
 - [x] Sản phẩm (danh sách, lọc, tìm kiếm, phân trang)
-- [ ] Chi tiết, Truy xuất, Giỏ hàng, Thanh toán, Đơn hàng, Hồ sơ
+- [x] Chi tiết sản phẩm (kèm đánh giá, thêm vào giỏ)
+- [x] Giỏ hàng
+- [ ] Truy xuất, Giỏ hàng, Thanh toán, Đơn hàng, Hồ sơ
 - [ ] Khu vực Seller, khu vực Admin
