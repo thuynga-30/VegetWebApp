@@ -143,22 +143,28 @@ export function Checkbox({ checked, onChange, label, top }: { checked: boolean; 
   );
 }
 
+/** Ô chọn phương thức: flex items-center gap-3 p-3 rounded-xl border (chọn: border-primary bg-primary/5) */
 export function Radio({ selected, onSelect, label, disabled }: { selected: boolean; onSelect: () => void; label: string; disabled?: boolean }) {
   return (
     <Pressable
       onPress={disabled ? undefined : onSelect}
       style={{
-        flexDirection: "row", alignItems: "center", gap: 10, padding: 12, borderWidth: 1, borderRadius: radius.lg,
-        borderColor: selected ? colors.primary : colors.border, backgroundColor: selected ? colors.primarySoft : colors.card, opacity: disabled ? 0.5 : 1,
+        flexDirection: "row", alignItems: "center", gap: 12, padding: 12, borderWidth: 1, borderRadius: radius.xl,
+        borderColor: selected ? colors.primary : colors.border,
+        backgroundColor: selected ? "rgba(27,126,42,0.05)" : "transparent",
+        opacity: disabled ? 0.5 : 1,
       }}
       accessibilityRole="radio"
       accessibilityState={{ selected, disabled }}
     >
-      <View style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: selected ? colors.primary : colors.border, alignItems: "center", justifyContent: "center" }}>
-        {selected ? <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary }} /> : null}
-      </View>
+      <View
+        style={{
+          width: 16, height: 16, borderRadius: 8, borderWidth: selected ? 5 : 1,
+          borderColor: selected ? colors.primary : "#767676", backgroundColor: colors.white,
+        }}
+      />
       <Icon name="credit-card" size={16} color={colors.mutedFg} />
-      <Txt style={{ flex: 1 }}>{label}</Txt>
+      <Txt size={16} lh={24} style={{ flex: 1 }}>{label}</Txt>
     </Pressable>
   );
 }

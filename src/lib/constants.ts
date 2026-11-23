@@ -37,18 +37,18 @@ export const ORDER_STATUS_TONE: Record<OrderStatus, Tone> = {
   Confirmed: { bg: colors.blue100, fg: colors.blue700 },
   Preparing: { bg: colors.amber100, fg: colors.amber700 },
   Shipping: { bg: colors.indigo100, fg: colors.indigo700 },
-  Delivered: { bg: colors.primarySoft, fg: colors.primary },
-  Completed: { bg: colors.primarySoft, fg: colors.primary },
+  Delivered: { bg: colors.primary15, fg: colors.primary },
+  Completed: { bg: colors.primary15, fg: colors.primary },
   Cancelled: { bg: colors.destructiveSoft, fg: colors.destructive },
 };
 
 export const APPROVAL_STATUS_TONE: Record<ApprovalStatus, Tone> = {
   Pending: { bg: colors.amber100, fg: colors.amber700 },
-  Approved: { bg: colors.primarySoft, fg: colors.primary },
+  Approved: { bg: colors.primary15, fg: colors.primary },
   Rejected: { bg: colors.destructiveSoft, fg: colors.destructive },
 };
 
 export const USER_STATUS_TONE: Record<UserStatus, Tone> = {
-  Active: { bg: colors.primarySoft, fg: colors.primary },
+  Active: { bg: colors.primary15, fg: colors.primary },
   Disabled: { bg: colors.destructiveSoft, fg: colors.destructive },
 };

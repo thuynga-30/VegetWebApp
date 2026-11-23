@@ -7,6 +7,7 @@ export const colors = {
   primaryFg: "#fcfcf8",
   primaryGlow: "#5fbf49",
   primarySoft: "rgba(27,126,42,0.12)",
+  primary15: "rgba(27,126,42,0.15)",
   secondary: "#e8efd8",
   muted: "#f2f3e8",
   mutedFg: "#5c675d",

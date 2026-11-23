@@ -1,4 +1,4 @@
-import { StyleSheet, Text, type TextProps, type TextStyle } from "react-native";
+import { Platform, StyleSheet, Text, type TextProps, type TextStyle } from "react-native";
 import { colors } from "@/theme";
 
 /** Be Vietnam Pro: mỗi độ đậm là một file font riêng */
@@ -12,6 +12,8 @@ const FAMILY: Record<string, string> = {
   "800": "BeVietnamPro_800ExtraBold",
   "900": "BeVietnamPro_800ExtraBold",
 };
+
+const MONO = Platform.select({ ios: "Menlo", android: "monospace", default: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" }) as string;
 
 type Variant = "h1" | "h2" | "h3" | "title" | "body" | "small" | "tiny" | "price";
 
@@ -34,13 +36,15 @@ interface Props extends TextProps {
   primary?: boolean;
   color?: string;
   center?: boolean;
+  /** font-mono (mã đơn, mã lô...) */
+  mono?: boolean;
   /** ghi đè cỡ chữ (px); dòng tự tính theo Tailwind nếu không đặt lh */
   size?: number;
   lh?: number;
   weight?: "400" | "500" | "600" | "700" | "800";
 }
 
-export function Txt({ variant = "body", muted, bold, primary, color, center, size, lh, weight, style, ...rest }: Props) {
+export function Txt({ variant = "body", muted, bold, primary, color, center, mono, size, lh, weight, style, ...rest }: Props) {
   const merged = StyleSheet.flatten([
     { color: colors.foreground },
     variants[variant],
@@ -50,12 +54,13 @@ export function Txt({ variant = "body", muted, bold, primary, color, center, siz
     size ? { fontSize: size, lineHeight: lh ?? Math.round(size * 1.5) } : lh ? { lineHeight: lh } : null,
     weight ? { fontWeight: weight } : null,
     center && { textAlign: "center" as const },
+    mono && { fontFamily: MONO },
     color ? { color } : null,
     style,
   ]) as TextStyle;
 
   const w = String(merged.fontWeight ?? "400");
   // Dùng font riêng theo độ đậm; bỏ fontWeight để tránh bị in đậm giả
-  const final: TextStyle = { ...merged, fontFamily: FAMILY[w] ?? FAMILY["400"], fontWeight: "normal" };
+  const final: TextStyle = { ...merged, fontFamily: merged.fontFamily ?? FAMILY[w] ?? FAMILY["400"], fontWeight: "normal" };
   return <Text {...rest} style={final} />;
 }
