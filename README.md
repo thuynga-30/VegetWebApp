@@ -28,7 +28,9 @@ hoặc đặt `EXPO_PUBLIC_API_PROTOCOL=http` nếu trình duyệt cho phép. Ba
 - [x] Giỏ hàng
 - [x] Thanh toán (COD + VNPay)
 - [x] Đơn hàng của tôi, Chi tiết đơn, Kết quả thanh toán VNPay
-- [ ] Truy xuất QR, Hồ sơ
+- [x] Truy xuất QR (nhập mã + quét camera web/app)
+- [x] Hồ sơ cá nhân (sửa thông tin, đổi ảnh đại diện, đăng xuất)
+- [x] Toàn bộ khu vực khách hàng (public) đã chuyển xong
 - [ ] Khu vực Seller, khu vực Admin
 
 ## Thanh toán VNPay

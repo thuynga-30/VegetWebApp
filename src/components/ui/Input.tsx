@@ -17,6 +17,8 @@ interface Props {
   rows?: number;
   editable?: boolean;
   hint?: string;
+  /** py-2 thay vì py-2.5 (cao 42px) */
+  dense?: boolean;
   style?: StyleProp<ViewStyle>;
   onSubmitEditing?: () => void;
   returnKeyType?: "done" | "next" | "go" | "search";
@@ -24,7 +26,7 @@ interface Props {
 
 export function Field({
   label, value, onChangeText, placeholder, icon, secureTextEntry, keyboardType, autoCapitalize,
-  multiline, rows = 3, editable = true, hint, style, onSubmitEditing, returnKeyType,
+  multiline, rows = 3, editable = true, hint, dense, style, onSubmitEditing, returnKeyType,
 }: Props) {
   const [focus, setFocus] = useState(false);
   return (
@@ -52,9 +54,10 @@ export function Field({
         textAlignVertical={multiline ? "top" : "center"}
         style={[
           styles.input,
+          dense && { minHeight: 42, paddingVertical: 8 },
           multiline && { minHeight: 22 * rows + 20, paddingTop: 10 },
           focus && { borderColor: colors.primary },
-          !editable && { backgroundColor: colors.muted, color: colors.mutedFg },
+          !editable && { backgroundColor: "rgba(242,243,232,0.5)", color: colors.mutedFg },
         ]}
       />
       {hint ? <Txt variant="tiny" muted>{hint}</Txt> : null}

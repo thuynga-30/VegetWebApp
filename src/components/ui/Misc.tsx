@@ -99,21 +99,25 @@ export interface TimelineItem {
   by?: string;
 }
 
+/** Timeline: ol border-l-2 border-primary/20 ml-2 space-y-5; chấm tròn bg-primary + ring-4 primary/20 */
 export function Timeline({ items, renderImage }: { items: TimelineItem[]; renderImage?: (uri: string) => React.ReactNode }) {
   return (
-    <View style={{ marginLeft: 8, borderLeftWidth: 2, borderLeftColor: "#bbf7d0", gap: 20 }}>
+    <View style={{ marginLeft: 8, borderLeftWidth: 2, borderLeftColor: "rgba(27,126,42,0.2)", gap: 20 }}>
       {items.map((it) => (
-        <View key={it.id} style={{ paddingLeft: 18 }}>
+        <View key={it.id} style={{ paddingLeft: 20 }}>
+          {/* vòng ring 4px bao quanh chấm 16px, tâm nằm đúng trên đường viền trái */}
           <View
             style={{
-              position: "absolute", left: -9, top: 3, width: 16, height: 16, borderRadius: 8,
-              backgroundColor: colors.green700, borderWidth: 3, borderColor: colors.green100,
+              position: "absolute", left: -13, top: -4, width: 24, height: 24, borderRadius: 12,
+              backgroundColor: "rgba(27,126,42,0.2)", alignItems: "center", justifyContent: "center",
             }}
-          />
-          {it.date ? <Txt variant="small" muted>{it.date}</Txt> : null}
-          <Txt variant="title">{it.title}</Txt>
-          {it.description ? <Txt variant="small" muted style={{ marginTop: 2 }}>{it.description}</Txt> : null}
-          {it.by ? <Txt variant="tiny" muted style={{ marginTop: 4 }}>Người ghi nhận: {it.by}</Txt> : null}
+          >
+            <View style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: colors.primary }} />
+          </View>
+          {it.date ? <Txt size={12} lh={16} muted>{it.date}</Txt> : null}
+          <Txt size={16} lh={24} weight="500">{it.title}</Txt>
+          {it.description ? <Txt size={14} lh={20} muted>{it.description}</Txt> : null}
+          {it.by ? <Txt size={12} lh={16} muted style={{ marginTop: 4 }}>Người ghi nhận: {it.by}</Txt> : null}
           {it.image && renderImage ? <View style={{ marginTop: 8 }}>{renderImage(it.image)}</View> : null}
         </View>
       ))}
