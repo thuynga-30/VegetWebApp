@@ -23,6 +23,8 @@ interface Props {
   /** dòng mô tả dưới tên người dùng */
   subtitle: string;
   fallbackName: string;
+  /** chữ cái trên avatar khi chưa có tên người dùng */
+  fallbackInitial?: string;
   menu: PanelMenuItem[];
   titleOf: (pathname: string) => string;
   children: React.ReactNode;
@@ -54,7 +56,7 @@ function SidebarItem({ item, active }: { item: PanelMenuItem; active: boolean })
   );
 }
 
-function Sidebar({ badge, subtitle, fallbackName, menu, pathname }: Omit<Props, "titleOf" | "children"> & { pathname: string }) {
+function Sidebar({ badge, subtitle, fallbackName, fallbackInitial, menu, pathname }: Omit<Props, "titleOf" | "children"> & { pathname: string }) {
   const { user, logout } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -93,7 +95,7 @@ function Sidebar({ badge, subtitle, fallbackName, menu, pathname }: Omit<Props, 
               alignItems: "center", justifyContent: "center",
             }}
           >
-            <Txt size={16} lh={24} weight="600" color={colors.sidebarFg}>{(user?.full_name?.[0] ?? fallbackName[0]).toUpperCase()}</Txt>
+            <Txt size={16} lh={24} weight="600" color={colors.sidebarFg}>{(user?.full_name?.[0] ?? fallbackInitial ?? fallbackName[0]).toUpperCase()}</Txt>
           </View>
           <View style={{ flex: 1, minWidth: 0 }}>
             <Txt size={14} lh={20} weight="500" color={colors.sidebarFg} numberOfLines={1}>{user?.full_name ?? fallbackName}</Txt>
@@ -119,7 +121,7 @@ function Sidebar({ badge, subtitle, fallbackName, menu, pathname }: Omit<Props, 
  * Khung khu vực quản lý (Seller / Admin):
  * máy tính: sidebar 256px + header; điện thoại: header + thanh menu cuộn ngang.
  */
-export function PanelShell({ badge, subtitle, fallbackName, menu, titleOf, children }: Props) {
+export function PanelShell({ badge, subtitle, fallbackName, fallbackInitial, menu, titleOf, children }: Props) {
   const pathname = usePathname();
   const { isMd } = useLayout();
   const { logout } = useAuth();
@@ -128,7 +130,7 @@ export function PanelShell({ badge, subtitle, fallbackName, menu, titleOf, child
 
   return (
     <View style={{ flex: 1, flexDirection: "row", backgroundColor: colors.background }}>
-      {isMd ? <Sidebar badge={badge} subtitle={subtitle} fallbackName={fallbackName} menu={menu} pathname={pathname} /> : null}
+      {isMd ? <Sidebar badge={badge} subtitle={subtitle} fallbackName={fallbackName} fallbackInitial={fallbackInitial} menu={menu} pathname={pathname} /> : null}
 
       <View style={{ flex: 1, minWidth: 0 }}>
         {/* header: h-16 border-b bg-background px-6 gap-4 */}
