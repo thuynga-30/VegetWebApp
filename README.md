@@ -32,7 +32,8 @@ hoặc đặt `EXPO_PUBLIC_API_PROTOCOL=http` nếu trình duyệt cho phép. Ba
 - [x] Hồ sơ cá nhân (sửa thông tin, đổi ảnh đại diện, đăng xuất)
 - [x] Toàn bộ khu vực khách hàng (public) đã chuyển xong
 - [x] Seller: khung (sidebar + header) và Tổng quan
-- [ ] Seller: Trang trại, Lô hàng, Đơn hàng
+- [x] Seller: Trang trại (danh sách, thêm mới, hồ sơ + chứng nhận)
+- [ ] Seller: Lô hàng, Đơn hàng
 - [ ] Khu vực Admin
 
 ## Thanh toán VNPay
