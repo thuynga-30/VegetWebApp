@@ -14,21 +14,23 @@ interface Props {
   placeholder?: string;
   /** compact: giống <select> nhỏ của bản web (px-3 py-2.5 rounded-xl bg-background text-sm) */
   compact?: boolean;
+  /** chữ 14px (text-sm) */
+  textSm?: boolean;
   minWidth?: number;
 }
 
 /** Ô chọn dạng danh sách (thay <select>), chạy giống nhau trên web và app */
-export function Select({ label, value, onChange, options, placeholder = "— Chọn —", compact, minWidth }: Props) {
+export function Select({ label, value, onChange, options, placeholder = "— Chọn —", compact, textSm, minWidth }: Props) {
   const [open, setOpen] = useState(false);
   const current = options.find((o) => o.value === value);
   return (
     <View style={{ gap: 6 }}>
-      {label ? <Txt variant="small" bold>{label}</Txt> : null}
+      {label ? <Txt size={14} lh={20} weight="500">{label}</Txt> : null}
       <Pressable
         onPress={() => setOpen(true)}
         style={[styles.box, compact && { minHeight: 42, borderRadius: radius.xl, backgroundColor: colors.background, borderColor: colors.border, minWidth }]}
       >
-        <Txt size={14} lh={20} style={{ flex: 1 }} muted={!current} numberOfLines={1}>{current?.label ?? placeholder}</Txt>
+        <Txt size={compact || textSm ? 14 : 16} lh={compact || textSm ? 20 : 24} style={{ flex: 1 }} muted={!current} numberOfLines={1}>{current?.label ?? placeholder}</Txt>
         <Icon name="chevron-down" size={16} color={colors.mutedFg} />
       </Pressable>
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
@@ -59,8 +61,8 @@ export function Select({ label, value, onChange, options, placeholder = "— Ch�
 
 const styles = StyleSheet.create({
   box: {
-    minHeight: 44, borderWidth: 1, borderColor: colors.input, borderRadius: radius.lg,
-    paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: colors.card,
+    minHeight: 42, borderWidth: 1, borderColor: colors.border, borderRadius: radius.lg,
+    paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: colors.background,
   },
   overlay: { flex: 1, backgroundColor: colors.overlay, justifyContent: "center", padding: 24 },
   sheet: { backgroundColor: colors.card, borderRadius: radius.xl, padding: 16, width: "100%", maxWidth: 460, alignSelf: "center" },

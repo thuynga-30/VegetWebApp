@@ -19,6 +19,10 @@ interface Props {
   hint?: string;
   /** py-2 thay vì py-2.5 (cao 42px) */
   dense?: boolean;
+  /** nhãn nhỏ xám (text-xs text-muted-foreground) */
+  labelMuted?: boolean;
+  /** chữ trong ô cỡ 14px (text-sm) */
+  textSm?: boolean;
   style?: StyleProp<ViewStyle>;
   onSubmitEditing?: () => void;
   returnKeyType?: "done" | "next" | "go" | "search";
@@ -26,7 +30,7 @@ interface Props {
 
 export function Field({
   label, value, onChangeText, placeholder, icon, secureTextEntry, keyboardType, autoCapitalize,
-  multiline, rows = 3, editable = true, hint, dense, style, onSubmitEditing, returnKeyType,
+  multiline, rows = 3, editable = true, hint, dense, labelMuted, textSm, style, onSubmitEditing, returnKeyType,
 }: Props) {
   const [focus, setFocus] = useState(false);
   return (
@@ -34,7 +38,7 @@ export function Field({
       {label ? (
         <View style={styles.labelRow}>
           {icon ? <Icon name={icon} size={14} color={colors.mutedFg} /> : null}
-          <Txt size={14} lh={20} weight="500">{label}</Txt>
+          {labelMuted ? <Txt size={12} lh={16} muted>{label}</Txt> : <Txt size={14} lh={20} weight="500">{label}</Txt>}
         </View>
       ) : null}
       <TextInput
@@ -55,6 +59,7 @@ export function Field({
         style={[
           styles.input,
           dense && { minHeight: 42, paddingVertical: 8 },
+          textSm && { fontSize: 14 },
           multiline && { minHeight: 22 * rows + 20, paddingTop: 10 },
           focus && { borderColor: colors.primary },
           !editable && { backgroundColor: "rgba(242,243,232,0.5)", color: colors.mutedFg },
