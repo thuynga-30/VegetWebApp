@@ -31,7 +31,9 @@ hoặc đặt `EXPO_PUBLIC_API_PROTOCOL=http` nếu trình duyệt cho phép. Ba
 - [x] Truy xuất QR (nhập mã + quét camera web/app)
 - [x] Hồ sơ cá nhân (sửa thông tin, đổi ảnh đại diện, đăng xuất)
 - [x] Toàn bộ khu vực khách hàng (public) đã chuyển xong
-- [ ] Khu vực Seller, khu vực Admin
+- [x] Seller: khung (sidebar + header) và Tổng quan
+- [ ] Seller: Trang trại, Lô hàng, Đơn hàng
+- [ ] Khu vực Admin
 
 ## Thanh toán VNPay
 - **Web:** chuyển hẳn sang trang VNPay, VNPay quay về `/payment/vnpay/return` (cấu hình như bản cũ).

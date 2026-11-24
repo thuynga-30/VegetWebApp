@@ -41,31 +41,34 @@ export function SectionHeader({ title, subtitle, action }: { title: string; subt
   );
 }
 
+/** bg-card border rounded-2xl p-5 (highlight: ring-2 ring-amber-400/40) */
 export function StatCard({
   icon, label, value, sub, highlight,
 }: { icon: IconName; label: string; value: string; sub?: string; highlight?: boolean }) {
-  return (
-    <View
-      style={[
-        {
-          flexGrow: 1, flexBasis: 150, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border,
-          borderRadius: radius.xl, padding: 14, gap: 8,
-        },
-        shadow,
-        highlight && { borderColor: colors.amber400, borderWidth: 2 },
-      ]}
-    >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <View style={{ width: 42, height: 42, borderRadius: radius.lg, backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center" }}>
+  const card = (
+    <View style={{ backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: radius.xxl, padding: 20 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <View
+          style={{
+            width: 44, height: 44, borderRadius: radius.xl, backgroundColor: "rgba(27,126,42,0.1)",
+            alignItems: "center", justifyContent: "center",
+          }}
+        >
           <Icon name={icon} size={20} color={colors.primary} />
         </View>
-        <View style={{ flex: 1 }}>
-          <Txt variant="tiny" muted>{label}</Txt>
-          <Txt variant="h3" numberOfLines={1} adjustsFontSizeToFit>{value}</Txt>
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Txt size={12} lh={16} muted>{label}</Txt>
+          <Txt size={20} lh={28} weight="700" numberOfLines={1}>{value}</Txt>
         </View>
       </View>
-      {sub ? <Txt variant="tiny" muted>{sub}</Txt> : null}
+      {sub ? <Txt size={12} lh={16} muted style={{ marginTop: 12 }}>{sub}</Txt> : null}
     </View>
+  );
+  // ring ngoài 2px
+  return highlight ? (
+    <View style={{ padding: 2, borderRadius: 18, backgroundColor: "rgba(251,191,36,0.4)" }}>{card}</View>
+  ) : (
+    card
   );
 }
 
