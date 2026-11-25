@@ -38,7 +38,8 @@ hoặc đặt `EXPO_PUBLIC_API_PROTOCOL=http` nếu trình duyệt cho phép. Ba
 - [x] Toàn bộ khu vực Seller đã chuyển xong
 - [x] Admin: khung + Tổng quan
 - [x] Admin: Kiểm duyệt lô hàng (danh sách + chi tiết duyệt/từ chối, QR)
-- [ ] Admin: Người dùng, Nông trại, Đơn hàng, Báo cáo
+- [x] Admin: Người dùng (lọc vai trò, duyệt nông trại, khóa/mở tài khoản)
+- [ ] Admin: Nông trại, Đơn hàng, Báo cáo
 
 ## Thanh toán VNPay
 - **Web:** chuyển hẳn sang trang VNPay, VNPay quay về `/payment/vnpay/return` (cấu hình như bản cũ).
