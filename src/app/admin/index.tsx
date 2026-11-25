@@ -13,6 +13,7 @@ import { batchService } from "@/services/batchService";
 import { orderService } from "@/services/orderService";
 import { userService } from "@/services/userService";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { farmService } from "@/services/farmService";
 
 /** bg-card border rounded-2xl p-5 */
 function Panel({ children }: { children: React.ReactNode }) {
@@ -49,7 +50,72 @@ function PendingRow({ b }: { b: any }) {
     </Link>
   );
 }
+function PendingFarmRow({ farm }: { farm: any }) {
+  const [hover, setHover] = useState(false);
 
+  return (
+    <Link href={`/admin/farms/${farm.id}`} asChild>
+      <Pressable
+        onHoverIn={() => setHover(true)}
+        onHoverOut={() => setHover(false)}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+          padding: 8,
+          borderRadius: radius.lg,
+          backgroundColor: hover ? colors.muted : "transparent",
+        }}
+      >
+        {farm.coverImage ? (
+          <Img
+            uri={farm.coverImage}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: radius.lg,
+            }}
+          />
+        ) : (
+          <View
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: radius.lg,
+              backgroundColor: colors.muted,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Icon name="map-pin" size={18} color={colors.mutedFg} />
+          </View>
+        )}
+
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Txt size={14} lh={20} weight="600" numberOfLines={1}>
+            {farm.farmName}
+          </Txt>
+          <Txt size={12} lh={16} muted numberOfLines={1}>
+            {farm.address || "Chưa cập nhật địa chỉ"}
+          </Txt>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: colors.amber100,
+            paddingHorizontal: 8,
+            paddingVertical: 3,
+            borderRadius: radius.full,
+          }}
+        >
+          <Txt size={12} lh={16} color={colors.amber700}>
+            Chờ duyệt
+          </Txt>
+        </View>
+      </Pressable>
+    </Link>
+  );
+}
 // Độ rộng cột bảng "Đơn hàng gần đây"
 const COL = { id: 1, customer: 2, date: 1.4, value: 1.6 } as const;
 
@@ -58,12 +124,13 @@ export default function AdminOverviewPage() {
   const { data: batches, refetch: rb } = useFetch(() => batchService.getAllAdmin(), []);
   const { data: orders, refetch: ro } = useFetch(() => orderService.getAll(), []);
   const { data: userCount, refetch: ru } = useFetch(() => userService.getCount(), []);
-
+  const { data: farms, refetch: rf, } = useFetch(() => farmService.getAllAdmin(), []);
   const pending = batches?.filter((b) => b.approval_status === "Pending") ?? [];
   const onSale = batches?.filter((b) => b.approval_status === "Approved").length ?? 0;
   const revenue =
     orders?.filter((o) => ["Delivered", "Completed"].includes(o.status)).reduce((s, o) => s + Number(o.total_price), 0) ?? 0;
-
+  const pendingFarms =
+    farms?.filter((farm) => farm.status === "pending") ?? [];
   const head = (w: number, label: string, right?: boolean) => (
     <View key={label} style={{ flex: w, paddingBottom: 8, alignItems: right ? "flex-end" : "flex-start" }}>
       <Txt size={12} lh={16} muted style={{ textTransform: "uppercase" }}>{label}</Txt>
@@ -71,14 +138,55 @@ export default function AdminOverviewPage() {
   );
 
   return (
-    <PanelPage onRefresh={() => { rb(); ro(); ru(); }}>
-      <Grid cols={isMd ? 4 : 1} gap={16}>
+    <PanelPage onRefresh={() => { rb(); ro(); ru(); rf(); }}>
+      <Grid cols={isMd ? 3 : 1} gap={16}>
         <StatCard icon="users" label="Tổng người dùng" value={String(userCount ?? 0)} />
         <StatCard icon="package" label="Lô hàng đang bán" value={String(onSale)} />
         <StatCard icon="check-square" label="Chờ kiểm duyệt" value={String(pending.length)} highlight={pending.length > 0} sub="Ưu tiên xử lý trong 24h" />
         <StatCard icon="shopping-bag" label="Doanh thu" value={formatCurrency(revenue)} />
+        <StatCard icon="map-pin" label="Trang trại chờ duyệt" value={String(pendingFarms.length)}
+          highlight={pendingFarms.length > 0}
+          sub="Seller vừa đăng ký hoặc cập nhật"
+        />
       </Grid>
+      <Panel>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 12,
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Icon name="bell" size={18} color={colors.amber700} />
+            <Txt size={16} lh={24} weight="600">
+              Trang trại cần kiểm duyệt
+            </Txt>
+          </View>
 
+          <Link href="/admin/farms" asChild>
+            <Pressable style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+              <Txt size={12} lh={16} color={colors.primary}>
+                Xem tất cả
+              </Txt>
+              <Icon name="arrow-right" size={12} color={colors.primary} />
+            </Pressable>
+          </Link>
+        </View>
+
+        <View style={{ gap: 8 }}>
+          {pendingFarms.slice(0, 6).map((farm) => (
+            <PendingFarmRow key={farm.id} farm={farm} />
+          ))}
+
+          {pendingFarms.length === 0 ? (
+            <Txt size={14} lh={20} muted>
+              Không có trang trại nào đang chờ kiểm duyệt.
+            </Txt>
+          ) : null}
+        </View>
+      </Panel>
       <Panel>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
           <Txt size={16} lh={24} weight="600">Lô hàng chờ duyệt</Txt>

@@ -88,7 +88,11 @@ export const farmService = {
 
         return response.data;
     },
-
+    // Seller: xóa trang trại
+    deleteMyFarm: async (id: number) => {
+        const response = await api.delete(`/seller/farms/${id}`);
+        return response;
+    },
     // Seller: upload ảnh bìa (type "Farm") hoặc chứng nhận (type "Certifi")
     uploadImage: async (farmId: number, file: PickedImage, type: "Farm" | "Certifi") => {
         const formData = new FormData();

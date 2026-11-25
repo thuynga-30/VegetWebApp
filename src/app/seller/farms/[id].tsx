@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { colors, radius } from "@/theme";
 import { Txt } from "@/components/ui/Txt";
 import { Icon } from "@/components/ui/Icon";
@@ -19,6 +19,7 @@ import { MAX_IMAGE_SIZE, pickImages, type PickedImage } from "@/lib/upload";
 export default function FarmProfilePage() {
   const { id, message: incoming } = useLocalSearchParams<{ id: string; message?: string }>();
   const farmId = Number(id);
+  const router = useRouter();
   const { isMd } = useLayout();
 
   const { data: farm, loading, refetch } = useFetch(
@@ -85,7 +86,7 @@ export default function FarmProfilePage() {
         if (farm.cover) await farmService.deleteImage(farm.cover.id);
         setCoverFile(null);
       }
-      say("Đã lưu hồ sơ trang trại.");
+      say(  "Đã cập nhật hồ sơ trang trại. Trang trại đã chuyển sang trạng thái chờ Admin kiểm duyệt lại.");
       refetch();
     } catch (err) {
       say(errMessage(err, "Lưu thất bại"), true);
@@ -93,7 +94,33 @@ export default function FarmProfilePage() {
       setSaving(false);
     }
   };
+  const deleteFarm = async () => {
+    if (!farm) return;
 
+    const confirmed = await confirmDialog(
+      `Bạn có chắc chắn muốn xóa trang trại "${farm.farm_name}" không? Thao tác này không thể hoàn tác.`,
+      undefined,
+      "Xóa trang trại"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setSaving(true);
+      say("");
+
+      await farmService.deleteMyFarm(farm.id);
+
+      router.replace("/seller/farms");
+    } catch (err) {
+      say(
+        errMessage(err, "Không thể xóa trang trại"),
+        true
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
   const uploadCertificate = async () => {
     if (!farm) return;
     try {
@@ -188,6 +215,35 @@ export default function FarmProfilePage() {
                 >
                   <Icon name="save" size={16} color={colors.primaryFg} />
                   <Txt size={16} lh={24} weight="600" color={colors.primaryFg}>{saving ? "Đang lưu..." : "Lưu thay đổi"}</Txt>
+                </Pressable>
+                <Pressable
+                  onPress={saving ? undefined : deleteFarm}
+                  style={{
+                    alignSelf: "flex-start",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 8,
+                    backgroundColor: "#FEE2E2",
+                    paddingHorizontal: 20,
+                    paddingVertical: 10,
+                    borderRadius: radius.lg,
+                    opacity: saving ? 0.5 : 1,
+                  }}
+                >
+                  <Icon
+                    name="trash-2"
+                    size={16}
+                    color="#DC2626"
+                  />
+
+                  <Txt
+                    size={14}
+                    lh={20}
+                    weight="600"
+                    color="#DC2626"
+                  >
+                    Xóa trang trại
+                  </Txt>
                 </Pressable>
               </View>
             </Card>

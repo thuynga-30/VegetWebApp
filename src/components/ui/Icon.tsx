@@ -61,6 +61,7 @@ const MAP = {
   "layout-grid": ["LayoutGrid", "Grid"],
   "bar-chart-3": ["BarChart3", "ChartColumn"],
   "clipboard-list": ["ClipboardList"],
+    bell: ["Bell"],
 } as const;
 
 export type IconName = keyof typeof MAP;
