@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Pressable, View } from "react-native";
+import { useEffect, useState } from "react"; import { Pressable, View } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { colors, radius } from "@/theme";
 import { Txt } from "@/components/ui/Txt";
@@ -20,6 +19,33 @@ const TRUST_LABEL: Record<string, { level: number; text: string }> = {
   Medium: { level: 2, text: "Cấp 2 — Nhật ký canh tác đầy đủ" },
   High: { level: 3, text: "Cấp 3 — Chứng nhận & xác minh toàn diện" },
 };
+type TrustLevel = "Low" | "Medium" | "High";
+
+const TRUST_OPTIONS: {
+  value: TrustLevel;
+  level: number;
+  title: string;
+  description: string;
+}[] = [
+    {
+      value: "Low",
+      level: 1,
+      title: "Cấp 1 – Tin cậy cơ bản",
+      description: "Đã xác minh thông tin cơ bản",
+    },
+    {
+      value: "Medium",
+      level: 2,
+      title: "Cấp 2 – Tin cậy khá",
+      description: "Nhật ký canh tác đầy đủ",
+    },
+    {
+      value: "High",
+      level: 3,
+      title: "Cấp 3 – Tin cậy cao",
+      description: "Chứng nhận và xác minh toàn diện",
+    },
+  ];
 
 /** p-2.5 rounded-lg bg-muted/50 (căn trái) */
 function Info({ label, value }: { label: string; value: string }) {
@@ -84,9 +110,14 @@ export default function FarmApprovalDetailPage() {
 
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [selectedTrustLevel, setSelectedTrustLevel] = useState<TrustLevel>("Low");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
-
+  useEffect(() => {
+    if (farm?.trustLevel) {
+      setSelectedTrustLevel(farm.trustLevel);
+    }
+  }, [farm?.trustLevel]);
   if (loading) {
     return (
       <PanelPage>
@@ -112,8 +143,9 @@ export default function FarmApprovalDetailPage() {
     setSubmitting(true);
     setErrorMsg(null);
     try {
-      if (action === "approve") await farmService.approve(farm.id);
-      else await farmService.reject(farm.id, note || "Hồ sơ chưa đủ minh chứng");
+      if (action === "approve") {
+        await farmService.approve(farm.id, selectedTrustLevel);
+      } else await farmService.reject(farm.id, note || "Hồ sơ chưa đủ minh chứng");
       router.replace("/admin/users");
     } catch (err) {
       setErrorMsg(errMessage(err, "Có lỗi xảy ra, vui lòng thử lại."));
@@ -212,6 +244,60 @@ export default function FarmApprovalDetailPage() {
             {status === "pending" ? (
               <Card>
                 <Txt size={16} lh={24} weight="600" style={{ marginBottom: 12 }}>Quyết định duyệt hồ sơ</Txt>
+
+                <Txt size={14} lh={20} weight="600" style={{ marginBottom: 8 }}>
+                  Chọn cấp độ tin cậy
+                </Txt>
+
+                <View style={{ gap: 8, marginBottom: 16 }}>
+                  {TRUST_OPTIONS.map((option) => {
+                    const selected = selectedTrustLevel === option.value;
+
+                    return (
+                      <Pressable
+                        key={option.value}
+                        onPress={() => setSelectedTrustLevel(option.value)}
+                        disabled={submitting}
+                        style={{
+                          padding: 12,
+                          borderRadius: radius.lg,
+                          borderWidth: selected ? 2 : 1,
+                          borderColor: selected ? colors.primary : colors.border,
+                          backgroundColor: selected
+                            ? "rgba(25,135,55,0.08)"
+                            : colors.card,
+                          opacity: submitting ? 0.6 : 1,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <View style={{ flex: 1 }}>
+                            <Txt size={14} lh={20} weight="600">
+                              {option.title}
+                            </Txt>
+
+                            <Txt size={12} lh={18} muted>
+                              {option.description}
+                            </Txt>
+                          </View>
+
+                          {selected ? (
+                            <Icon
+                              name="check-circle"
+                              size={20}
+                              color={colors.primary}
+                            />
+                          ) : null}
+                        </View>
+                      </Pressable>
+                    );
+                  })}
+                </View>
                 <Field dense textSm multiline rows={3} value={note} onChangeText={setNote} placeholder="Lý do từ chối..." />
                 {errorMsg ? <Txt size={12} lh={16} color={colors.destructive} style={{ marginTop: 8 }}>{errorMsg}</Txt> : null}
                 <View style={{ flexDirection: "row", gap: 8, marginTop: 12 }}>

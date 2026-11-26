@@ -47,6 +47,7 @@ const MAP = {
   "loader-2": ["Loader2", "LoaderCircle"],
   "check-square": ["CheckSquare", "SquareCheck"],
   "check-circle-2": ["CheckCircle2", "CircleCheck"],
+  "check-circle": ["CheckCircle", "CircleCheck"],
   "x-circle": ["XCircle", "CircleX"],
   "trending-up": ["TrendingUp"],
   users: ["Users"],

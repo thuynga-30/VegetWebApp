@@ -134,11 +134,18 @@ export const farmService = {
     },
 
     // Admin - duyệt farm
-    approve: async (id: number) => {
-        const response =
-            await api.patch(
-                `/admin/farms/${id}/approve`
-            ) as ApiResponse<unknown>;
+    approve: async (
+        id: number,
+        trustLevel: "Low" | "Medium" | "High"
+    ) => {
+        console.log("TrustLevel gửi lên:", trustLevel);
+
+        const response = await api.patch(
+            `/admin/farms/${id}/approve`,
+            {
+                trustLevel: trustLevel,
+            }
+        ) as ApiResponse<unknown>;
 
         return response.data;
     },

@@ -142,8 +142,8 @@ export default function AdminOverviewPage() {
       <Grid cols={isMd ? 3 : 1} gap={16}>
         <StatCard icon="users" label="Tổng người dùng" value={String(userCount ?? 0)} />
         <StatCard icon="package" label="Lô hàng đang bán" value={String(onSale)} />
-        <StatCard icon="check-square" label="Chờ kiểm duyệt" value={String(pending.length)} highlight={pending.length > 0} sub="Ưu tiên xử lý trong 24h" />
         <StatCard icon="shopping-bag" label="Doanh thu" value={formatCurrency(revenue)} />
+        <StatCard icon="check-square" label="Chờ kiểm duyệt" value={String(pending.length)} highlight={pending.length > 0} sub="Ưu tiên xử lý trong 24h" />
         <StatCard icon="map-pin" label="Trang trại chờ duyệt" value={String(pendingFarms.length)}
           highlight={pendingFarms.length > 0}
           sub="Seller vừa đăng ký hoặc cập nhật"
