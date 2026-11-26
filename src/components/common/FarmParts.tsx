@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Platform, Pressable, View } from "react-native";
+import { Platform, Pressable, TextInput, View } from "react-native";
 import { Link } from "expo-router";
 import { colors, radius } from "@/theme";
 import { Txt } from "@/components/ui/Txt";
@@ -38,6 +38,46 @@ export function InfoTile({ label, value }: { label: string; value: string }) {
   );
 }
 
+/** Ô thông tin có thể sửa trực tiếp (cùng kiểu InfoTile, giá trị là ô nhập căn giữa) */
+export function EditableTile({
+  label, value, onChangeText, placeholder = "—", suffix, keyboardType,
+}: {
+  label: string; value: string; onChangeText: (v: string) => void; placeholder?: string; suffix?: string;
+  keyboardType?: "default" | "decimal-pad";
+}) {
+  const [focus, setFocus] = useState(false);
+  return (
+    <View style={{ padding: 10, borderRadius: radius.lg, backgroundColor: "rgba(242,243,232,0.5)", alignItems: "center" }}>
+      <Txt size={11} lh={16} muted>{label}</Txt>
+      <View
+        style={{
+          marginTop: 2, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4, alignSelf: "stretch",
+          borderBottomWidth: 1, borderBottomColor: focus ? colors.primary : colors.border,
+        }}
+      >
+        <TextInput
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={colors.mutedFg + "99"}
+          keyboardType={keyboardType}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
+          accessibilityLabel={label}
+          style={[
+            {
+              flexShrink: 1, minWidth: 32, paddingVertical: 2, paddingHorizontal: 0, textAlign: "center",
+              fontSize: 14, lineHeight: 20, fontFamily: "BeVietnamPro_500Medium", color: colors.foreground,
+            },
+            Platform.OS === "web" ? ({ outlineStyle: "none" } as any) : null,
+          ]}
+        />
+        {suffix && value ? <Txt size={14} lh={20} weight="500">{suffix}</Txt> : null}
+      </View>
+    </View>
+  );
+}
+
 /** Thông báo: bg-primary/10 text-primary (hoặc destructive) text-sm rounded-xl px-4 py-2.5 */
 export function MessageBox({ text, error }: { text: string; error?: boolean }) {
   return (
@@ -63,10 +103,13 @@ interface PreviewProps {
   method: string;
   /** badge trạng thái bên phải tên (trang hồ sơ) */
   statusBadge?: React.ReactNode;
+  /** có truyền thì hai ô "Diện tích" / "Phương pháp" trở thành ô nhập trực tiếp */
+  onChangeArea?: (v: string) => void;
+  onChangeMethod?: (v: string) => void;
 }
 
 /** Thẻ ảnh bìa (aspect 16/7) + phần xem trước thông tin trang trại */
-export function FarmPreview({ coverUri, coverButtonLabel, onPickCover, farmName, address, description, areaHa, method, statusBadge }: PreviewProps) {
+export function FarmPreview({ coverUri, coverButtonLabel, onPickCover, farmName, address, description, areaHa, method, statusBadge, onChangeArea, onChangeMethod }: PreviewProps) {
   return (
     <View style={{ backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: radius.xxl, overflow: "hidden" }}>
       <View style={{ width: "100%", aspectRatio: 16 / 7, backgroundColor: colors.muted }}>
@@ -101,8 +144,16 @@ export function FarmPreview({ coverUri, coverButtonLabel, onPickCover, farmName,
         {description ? <Txt size={14} lh={20} muted style={{ marginTop: 8 }}>{description}</Txt> : null}
         <View style={{ marginTop: 16 }}>
           <Grid cols={3} gap={12}>
-            <InfoTile label="Diện tích" value={areaHa ? `${areaHa} ha` : "—"} />
-            <InfoTile label="Phương pháp" value={method || "—"} />
+            {onChangeArea ? (
+              <EditableTile label="Diện tích" value={areaHa} onChangeText={onChangeArea} suffix="ha" keyboardType="decimal-pad" />
+            ) : (
+              <InfoTile label="Diện tích" value={areaHa ? `${areaHa} ha` : "—"} />
+            )}
+            {onChangeMethod ? (
+              <EditableTile label="Phương pháp" value={method} onChangeText={onChangeMethod} />
+            ) : (
+              <InfoTile label="Phương pháp" value={method || "—"} />
+            )}
           </Grid>
         </View>
       </View>

@@ -77,7 +77,7 @@ export default function FarmProfilePage() {
         owner_name: form.owner_name,
         address: form.address,
         description: form.description,
-        area_ha: form.area_ha ? Number(form.area_ha) : undefined,
+        area_ha: form.area_ha.trim() ? Number(form.area_ha) : null,
         farming_method: form.farming_method,
       });
       // 2. Đổi ảnh bìa: tải ảnh mới lên rồi mới xóa ảnh cũ
@@ -86,7 +86,7 @@ export default function FarmProfilePage() {
         if (farm.cover) await farmService.deleteImage(farm.cover.id);
         setCoverFile(null);
       }
-      say(  "Đã cập nhật hồ sơ trang trại. Trang trại đã chuyển sang trạng thái chờ Admin kiểm duyệt lại.");
+      say("Đã cập nhật hồ sơ trang trại. Trang trại đã chuyển sang trạng thái chờ Admin kiểm duyệt lại.");
       refetch();
     } catch (err) {
       say(errMessage(err, "Lưu thất bại"), true);
@@ -94,33 +94,27 @@ export default function FarmProfilePage() {
       setSaving(false);
     }
   };
+
   const deleteFarm = async () => {
     if (!farm) return;
-
     const confirmed = await confirmDialog(
       `Bạn có chắc chắn muốn xóa trang trại "${farm.farm_name}" không? Thao tác này không thể hoàn tác.`,
       undefined,
       "Xóa trang trại"
     );
-
     if (!confirmed) return;
-
     try {
       setSaving(true);
       say("");
-
       await farmService.deleteMyFarm(farm.id);
-
       router.replace("/seller/farms");
     } catch (err) {
-      say(
-        errMessage(err, "Không thể xóa trang trại"),
-        true
-      );
+      say(errMessage(err, "Không thể xóa trang trại"), true);
     } finally {
       setSaving(false);
     }
   };
+
   const uploadCertificate = async () => {
     if (!farm) return;
     try {
@@ -189,6 +183,8 @@ export default function FarmProfilePage() {
               description={form.description}
               areaHa={form.area_ha}
               method={form.farming_method}
+              onChangeArea={set("area_ha")}
+              onChangeMethod={set("farming_method")}
               statusBadge={<StatusBadge status={statusLabel} />}
             />
 
@@ -216,34 +212,16 @@ export default function FarmProfilePage() {
                   <Icon name="save" size={16} color={colors.primaryFg} />
                   <Txt size={16} lh={24} weight="600" color={colors.primaryFg}>{saving ? "Đang lưu..." : "Lưu thay đổi"}</Txt>
                 </Pressable>
+
                 <Pressable
                   onPress={saving ? undefined : deleteFarm}
                   style={{
-                    alignSelf: "flex-start",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 8,
-                    backgroundColor: "#FEE2E2",
-                    paddingHorizontal: 20,
-                    paddingVertical: 10,
-                    borderRadius: radius.lg,
-                    opacity: saving ? 0.5 : 1,
+                    alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "#FEE2E2",
+                    paddingHorizontal: 20, paddingVertical: 10, borderRadius: radius.lg, opacity: saving ? 0.5 : 1,
                   }}
                 >
-                  <Icon
-                    name="trash-2"
-                    size={16}
-                    color="#DC2626"
-                  />
-
-                  <Txt
-                    size={14}
-                    lh={20}
-                    weight="600"
-                    color="#DC2626"
-                  >
-                    Xóa trang trại
-                  </Txt>
+                  <Icon name="trash-2" size={16} color="#DC2626" />
+                  <Txt size={14} lh={20} weight="600" color="#DC2626">Xóa trang trại</Txt>
                 </Pressable>
               </View>
             </Card>

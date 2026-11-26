@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"; import { Pressable, View } from "react-native";
+import { useState, useEffect } from "react";
+import { Pressable, View } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { colors, radius } from "@/theme";
 import { Txt } from "@/components/ui/Txt";
@@ -46,7 +47,6 @@ const TRUST_OPTIONS: {
       description: "Chứng nhận và xác minh toàn diện",
     },
   ];
-
 /** p-2.5 rounded-lg bg-muted/50 (căn trái) */
 function Info({ label, value }: { label: string; value: string }) {
   return (
@@ -110,7 +110,8 @@ export default function FarmApprovalDetailPage() {
 
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [selectedTrustLevel, setSelectedTrustLevel] = useState<TrustLevel>("Low");
+  const [selectedTrustLevel, setSelectedTrustLevel] =
+    useState<TrustLevel>("Low");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
   useEffect(() => {

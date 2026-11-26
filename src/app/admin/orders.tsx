@@ -14,17 +14,17 @@ import { errMessage } from "@/lib/errors";
 import { notify } from "@/lib/dialog";
 import type { OrderStatus } from "@/types/order";
 
-type Tab = | "Pending" | "Approved" | "Completed" | "Cancelled" | "All";
+type Tab = "Pending" | "Approved" | "Cancelled" | "All";
+
 const TABS: { key: Tab; label: string }[] = [
   { key: "Pending", label: "Chờ duyệt" },
   { key: "Approved", label: "Đã duyệt" },
-  { key: "Completed", label: "Hoàn thành" },
   { key: "Cancelled", label: "Từ chối" },
   { key: "All", label: "Tất cả" },
 ];
 
 // Các trạng thái coi là "đã duyệt" — mọi trạng thái sau khi admin xác nhận đơn, trước khi hoàn tất/hủy
-const APPROVED_STATUSES: OrderStatus[] = ["Confirmed", "Preparing", "Shipping", "Delivered"];
+const APPROVED_STATUSES: OrderStatus[] = ["Confirmed", "Preparing", "Shipping", "Delivered", "Completed"];
 
 // Độ rộng cột (flex) của bảng
 const COL = { id: 1.1, customer: 1.5, address: 2.2, date: 1.1, status: 1.2, total: 1.2, action: 1.8 } as const;
@@ -212,48 +212,17 @@ export default function AdminOrdersPage() {
   const filtered = useMemo(() => {
     if (!orders) return [];
     if (tab === "All") return orders;
-    if (tab === "Pending") {
-      return orders.filter((o) => o.status === "Pending");
-    }
-    if (tab === "Completed") {
-      return orders.filter((o) => o.status === "Completed");
-    }
-    if (tab === "Cancelled") {
-      return orders.filter((o) => o.status === "Cancelled");
-    }
-    return orders.filter((o) =>
-      APPROVED_STATUSES.includes(o.status)
-    );
+    if (tab === "Pending") return orders.filter((o) => o.status === "Pending");
+    if (tab === "Cancelled") return orders.filter((o) => o.status === "Cancelled");
+    return orders.filter((o) => APPROVED_STATUSES.includes(o.status));
   }, [orders, tab]);
 
   const counts = useMemo(() => {
-    if (!orders) {
-      return {
-        Pending: 0,
-        Approved: 0,
-        Completed: 0,
-        Cancelled: 0,
-        All: 0,
-      };
-    }
-
+    if (!orders) return { Pending: 0, Approved: 0, Cancelled: 0, All: 0 };
     return {
-      Pending: orders.filter(
-        (o) => o.status === "Pending"
-      ).length,
-
-      Approved: orders.filter(
-        (o) => APPROVED_STATUSES.includes(o.status)
-      ).length,
-
-      Completed: orders.filter(
-        (o) => o.status === "Completed"
-      ).length,
-
-      Cancelled: orders.filter(
-        (o) => o.status === "Cancelled"
-      ).length,
-
+      Pending: orders.filter((o) => o.status === "Pending").length,
+      Approved: orders.filter((o) => APPROVED_STATUSES.includes(o.status)).length,
+      Cancelled: orders.filter((o) => o.status === "Cancelled").length,
       All: orders.length,
     };
   }, [orders]);
@@ -287,16 +256,7 @@ export default function AdminOrdersPage() {
     </View>
   );
 
-  const emptyText =
-    tab === "Pending"
-      ? "Không có đơn hàng nào đang chờ duyệt."
-      : tab === "Approved"
-        ? "Không có đơn hàng nào đã duyệt."
-        : tab === "Completed"
-          ? "Chưa có đơn hàng nào hoàn thành."
-          : tab === "Cancelled"
-            ? "Không có đơn hàng nào bị từ chối."
-            : "Không có đơn hàng nào.";
+  const emptyText = tab === "Pending" ? "Không có đơn hàng nào đang chờ duyệt." : "Không có đơn hàng nào.";
   const empty = !loading && filtered.length === 0;
 
   return (

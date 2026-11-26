@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ActivityIndicator, Pressable, View, ScrollView } from "react-native";
+import { ActivityIndicator, Pressable, View } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
 import { colors, radius } from "@/theme";
 import { Screen } from "@/components/ui/Screen";
 import { Txt } from "@/components/ui/Txt";
 import { Icon } from "@/components/ui/Icon";
-import { Img, Lightbox } from "@/components/ui/Img";
+import { Img } from "@/components/ui/Img";
 import { Grid } from "@/components/ui/Misc";
 import { TrustBadge } from "@/components/ui/Badges";
 import { ReviewSection } from "@/components/common/ReviewSection";
@@ -33,8 +33,6 @@ export default function ProductDetailPage() {
   const { addItem } = useCart();
 
   const [qty, setQty] = useState(1);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [lightboxUri, setLightboxUri] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [cartMessage, setCartMessage] = useState("");
   const [cartError, setCartError] = useState("");
@@ -114,132 +112,15 @@ export default function ProductDetailPage() {
       <Wrap py={40}>
         <View style={{ flexDirection: isMd ? "row" : "column", gap: 40 }}>
           {/* ẢNH: rounded-2xl overflow-hidden border bg-muted aspect-square */}
-          {/* THƯ VIỆN ẢNH SẢN PHẨM */}
-          <View
-            style={{
-              flex: isMd ? 1 : undefined,
-              width: isMd ? undefined : "100%",
-            }}
-          >
-            {(() => {
-              const images = product.images?.length
-                ? product.images
-                : product.image
-                  ? [product.image]
-                  : [];
-
-              const activeImage =
-                selectedImage && images.includes(selectedImage)
-                  ? selectedImage
-                  : images[0] ?? null;
-
-              return (
-                <>
-                  {/* Ảnh lớn */}
-                  <Pressable
-                    onPress={() => activeImage && setLightboxUri(activeImage)}
-                    style={{
-                      borderRadius: radius.xxl,
-                      overflow: "hidden",
-                      borderWidth: 1,
-                      borderColor: colors.border,
-                      backgroundColor: colors.muted,
-                    }}
-                  >
-                    <Img
-                      uri={activeImage}
-                      style={{
-                        width: "100%",
-                        aspectRatio: 1,
-                      }}
-                      fallback="Không có hình ảnh"
-                    />
-
-                    {activeImage ? (
-                      <View
-                        style={{
-                          position: "absolute",
-                          right: 12,
-                          bottom: 12,
-                          backgroundColor: "rgba(0,0,0,0.55)",
-                          paddingHorizontal: 10,
-                          paddingVertical: 6,
-                          borderRadius: radius.lg,
-                        }}
-                      >
-                        <Txt size={12} lh={16} color="#FFFFFF">
-                          <Icon
-                            name="zoom-in"
-                            size={12}
-                            color="#FFFFFF"
-                          />{" "}
-                          Xem ảnh
-                        </Txt>
-                      </View>
-                    ) : null}
-                  </Pressable>
-
-                  {/* Các ảnh thu nhỏ */}
-                  {images.length > 1 ? (
-                    <View style={{ marginTop: 12 }}>
-                      <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{
-                          gap: 10,
-                          paddingVertical: 2,
-                        }}
-                      >
-                        {images.map((uri, index) => {
-                          const isSelected = uri === activeImage;
-
-                          return (
-                            <Pressable
-                              key={`${uri}-${index}`}
-                              onPress={() => setSelectedImage(uri)}
-                              style={{
-                                width: 76,
-                                height: 76,
-                                borderRadius: radius.lg,
-                                overflow: "hidden",
-                                borderWidth: isSelected ? 2 : 1,
-                                borderColor: isSelected
-                                  ? colors.primary
-                                  : colors.border,
-                                opacity: isSelected ? 1 : 0.75,
-                              }}
-                            >
-                              <Img
-                                uri={uri}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                }}
-                              />
-                            </Pressable>
-                          );
-                        })}
-                      </ScrollView>
-
-                      <Txt
-                        size={12}
-                        lh={18}
-                        muted
-                        style={{ marginTop: 6 }}
-                      >
-                        {images.length} hình ảnh sản phẩm
-                      </Txt>
-                    </View>
-                  ) : null}
-
-                  {/* Xem ảnh toàn màn hình */}
-                  <Lightbox
-                    uri={lightboxUri}
-                    onClose={() => setLightboxUri(null)}
-                  />
-                </>
-              );
-            })()}
+          <View style={{ flex: isMd ? 1 : undefined, width: isMd ? undefined : "100%" }}>
+            <View
+              style={{
+                borderRadius: radius.xxl, overflow: "hidden", borderWidth: 1, borderColor: colors.border,
+                backgroundColor: colors.muted,
+              }}
+            >
+              <Img uri={product.image} style={{ width: "100%", aspectRatio: 1 }} fallback="Không có hình ảnh" />
+            </View>
           </View>
 
           {/* THÔNG TIN */}

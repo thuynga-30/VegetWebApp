@@ -129,62 +129,12 @@ export default function OrderDetailPage() {
               <View
                 key={d.id}
                 style={{
-                  paddingBottom: 12,
-                  borderBottomWidth: i === details.length - 1 ? 0 : 1,
-                  borderBottomColor: colors.border,
+                  flexDirection: "row", justifyContent: "space-between", gap: 12, paddingBottom: 8,
+                  borderBottomWidth: i === details.length - 1 ? 0 : 1, borderBottomColor: colors.border,
                 }}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    gap: 12,
-                  }}
-                >
-                  <Txt size={14} lh={20} style={{ flex: 1 }}>
-                    {d.product_name ?? `Lô hàng #${d.batch_id}`} × {d.quantity}
-                  </Txt>
-
-                  <Txt size={14} lh={20} weight="500">
-                    {formatCurrency(d.price * d.quantity)}
-                  </Txt>
-                </View>
-
-                {order.status === "Completed" && d.product_id ? (
-                  <Link
-                    href={`/products/${d.product_id}`}
-                    asChild
-                  >
-                    <Pressable
-                      style={{
-                        marginTop: 10,
-                        alignSelf: "flex-start",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 6,
-                        paddingHorizontal: 14,
-                        paddingVertical: 9,
-                        borderRadius: radius.lg,
-                        backgroundColor: colors.primary,
-                      }}
-                    >
-                      <Icon
-                        name="star"
-                        size={15}
-                        color={colors.primaryFg}
-                      />
-
-                      <Txt
-                        size={13}
-                        lh={18}
-                        weight="600"
-                        color={colors.primaryFg}
-                      >
-                        Đánh giá sản phẩm
-                      </Txt>
-                    </Pressable>
-                  </Link>
-                ) : null}
+                <Txt size={14} lh={20} style={{ flex: 1 }}>{d.product_name ?? `Lô hàng #${d.batch_id}`} × {d.quantity}</Txt>
+                <Txt size={14} lh={20} weight="500">{formatCurrency(d.price * d.quantity)}</Txt>
               </View>
             ))}
           </View>

@@ -29,7 +29,7 @@ export interface ProductDetail {
     name: string;
     price: number;
     image: string | null;
-    images: string[];
+
     farm: {
         id: number;
         farmName: string;

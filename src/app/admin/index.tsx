@@ -126,11 +126,11 @@ export default function AdminOverviewPage() {
   const { data: userCount, refetch: ru } = useFetch(() => userService.getCount(), []);
   const { data: farms, refetch: rf, } = useFetch(() => farmService.getAllAdmin(), []);
   const pending = batches?.filter((b) => b.approval_status === "Pending") ?? [];
+  const pendingFarms = farms?.filter((farm) => farm.status === "pending") ?? [];
   const onSale = batches?.filter((b) => b.approval_status === "Approved").length ?? 0;
   const revenue =
     orders?.filter((o) => ["Delivered", "Completed"].includes(o.status)).reduce((s, o) => s + Number(o.total_price), 0) ?? 0;
-  const pendingFarms =
-    farms?.filter((farm) => farm.status === "pending") ?? [];
+
   const head = (w: number, label: string, right?: boolean) => (
     <View key={label} style={{ flex: w, paddingBottom: 8, alignItems: right ? "flex-end" : "flex-start" }}>
       <Txt size={12} lh={16} muted style={{ textTransform: "uppercase" }}>{label}</Txt>
@@ -144,9 +144,7 @@ export default function AdminOverviewPage() {
         <StatCard icon="package" label="Lô hàng đang bán" value={String(onSale)} />
         <StatCard icon="shopping-bag" label="Doanh thu" value={formatCurrency(revenue)} />
         <StatCard icon="check-square" label="Chờ kiểm duyệt" value={String(pending.length)} highlight={pending.length > 0} sub="Ưu tiên xử lý trong 24h" />
-        <StatCard icon="map-pin" label="Trang trại chờ duyệt" value={String(pendingFarms.length)}
-          highlight={pendingFarms.length > 0}
-          sub="Seller vừa đăng ký hoặc cập nhật"
+        <StatCard icon="map-pin" label="Trang trại chờ duyệt" value={String(pendingFarms.length)} highlight={pendingFarms.length > 0} sub="Seller vừa đăng ký hoặc cập nhật"
         />
       </Grid>
       <Panel>

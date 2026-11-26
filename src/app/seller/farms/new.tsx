@@ -129,6 +129,8 @@ export default function FarmCreatePage() {
               description={form.description}
               areaHa={form.area_ha}
               method={form.farming_method}
+              onChangeArea={set("area_ha")}
+              onChangeMethod={set("farming_method")}
             />
 
             <Card>

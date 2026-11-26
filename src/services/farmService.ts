@@ -88,11 +88,13 @@ export const farmService = {
 
         return response.data;
     },
-    // Seller: xóa trang trại
+
+    // Seller: xóa trang trại của mình
     deleteMyFarm: async (id: number) => {
-        const response = await api.delete(`/seller/farms/${id}`);
-        return response;
+        const response = await api.delete(`/seller/farms/${id}`) as ApiResponse<unknown>;
+        return response.data;
     },
+
     // Seller: upload ảnh bìa (type "Farm") hoặc chứng nhận (type "Certifi")
     uploadImage: async (farmId: number, file: PickedImage, type: "Farm" | "Certifi") => {
         const formData = new FormData();
@@ -138,18 +140,13 @@ export const farmService = {
         id: number,
         trustLevel: "Low" | "Medium" | "High"
     ) => {
-        console.log("TrustLevel gửi lên:", trustLevel);
-
         const response = await api.patch(
             `/admin/farms/${id}/approve`,
-            {
-                trustLevel: trustLevel,
-            }
+            { trustLevel }
         ) as ApiResponse<unknown>;
 
         return response.data;
     },
-
     // Admin - từ chối farm
     reject: async (
         id: number,
